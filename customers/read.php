@@ -11,9 +11,22 @@ $requestMethod = $_SERVER["REQUEST_METHOD"];
 
 if($requestMethod == "GET")
 {
-    $customerList = getCustomerList();
-    echo $customerList;
 
+    if(isset($_GET['id']))
+    {
+        $customer = getCustomer($_GET);
+        echo $customer;
+    }
+    else 
+    {
+        $customerList = getCustomerList();
+        echo $customerList;
+    
+    }
+
+
+
+  
 }
 else 
 {
