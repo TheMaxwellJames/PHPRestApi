@@ -172,4 +172,94 @@ function getCustomer($customerParams)
 
 }
 
+function updateCustomer($customerInput, $customerParams)
+{
+    global $conn;
+
+    if (!isset($customerParams['id'])) {
+        return error422('customer id not found in URL');
+    }
+    elseif ($customerParams['id'] == null)
+    {
+        return error422('Enter the id');
+    }
+
+    
+    $customerId = mysqli_real_escape_string($conn, $customerParams['id']);
+
+    $name = mysqli_real_escape_string($conn, $customerInput['name']);
+    $email = mysqli_real_escape_string($conn, $customerInput['email']);
+    $phone = mysqli_real_escape_string($conn, $customerInput['phone']);
+
+    if (empty(trim($name))) {
+        return error422('Enter your name');
+    } elseif (empty(trim($email))) {
+        return error422('Enter your email');
+    } elseif (empty(trim($phone))) {
+        return error422('Enter your phone');
+    } else {
+        $query = "UPDATE customers SET name='$name', email='$email', phone='$phone' WHERE id='$customerId' LIMIT 1 ";
+        $result = mysqli_query($conn, $query);
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Customer updated Successfully',
+            ];
+            header("HTTP/1.0 200 Success");
+            echo json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            echo json_encode($data);
+        }
+    }
+}
+
+function deleteCustomer($customerParams)
+{
+    global $conn;
+
+    if (!isset($customerParams['id'])) {
+        return error422('customer id not found in URL');
+    }
+    elseif ($customerParams['id'] == null)
+    {
+        return error422('Enter the id');
+    }
+
+    
+    $customerId = mysqli_real_escape_string($conn, $customerParams['id']);
+
+    $query = "DELETE FROM customers WHERE id=' $customerId' LIMIT 1";
+
+    $result = mysqli_query($conn, $query);
+
+    if($result)
+    {
+        $data = [
+            'status' => 200,
+            'message' => 'Deleted Successfully',
+        ];
+        header("HTTP/1.0 200 OK");
+        echo json_encode($data);
+    }
+    else 
+    {
+        $data = [
+            'status' => 404,
+            'message' => 'Customer Not Found',
+        ];
+        header("HTTP/1.0 404 Not Found");
+        echo json_encode($data);
+    }
+
+
+
+}
+
+
 ?>
